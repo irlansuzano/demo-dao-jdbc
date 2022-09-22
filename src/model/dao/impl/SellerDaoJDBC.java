@@ -52,17 +52,8 @@ public class SellerDaoJDBC implements SellerDao {
             rs = st.executeQuery();
 
             if(rs.next()){
-                Department dp = new Department();
-                Seller seller = new Seller();
-                dp.setId(rs.getInt("DepartmentId"));
-                dp.setName(rs.getString("DepName"));
-                seller.setId(rs.getInt("Id"));
-                seller.setName(rs.getString("Name"));
-                seller.setEmail(rs.getString("Email"));
-                seller.setBaseSalary(rs.getDouble("BaseSalary"));
-                seller.setBirthDate(rs.getDate("BirthDate"));
-                seller.setDepartment(dp);
-                return seller;
+                Department dp = instantiateDepartment(rs);
+                return instantiateSeller(rs, dp);
             }
             return null;
         }catch (SQLException e){
@@ -76,6 +67,26 @@ public class SellerDaoJDBC implements SellerDao {
 
         return null;
     }
+
+    private Seller instantiateSeller(ResultSet rs, Department dp) throws SQLException{
+        Seller seller = new Seller();
+        seller.setId(rs.getInt("Id"));
+        seller.setName(rs.getString("Name"));
+        seller.setEmail(rs.getString("Email"));
+        seller.setBaseSalary(rs.getDouble("BaseSalary"));
+        seller.setBirthDate(rs.getDate("BirthDate"));
+        seller.setDepartment(dp);
+        return seller;
+    }
+
+    private Department instantiateDepartment(ResultSet rs) throws SQLException{     //n precisa tratar exceção aqui, pq ja trata no outro metodo
+        Department dp = new Department();
+        dp.setId(rs.getInt("DepartmentId"));
+        dp.setName(rs.getString("DepName"));
+        return dp;
+    }
+
+
 
     @Override
     public List<Seller> findAll() {
